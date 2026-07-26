@@ -33,3 +33,4 @@ action: ihidro.submit_index
 data:
   value: 1050
 ```
+Or manually from **Developer tools** $\rightarrow$ **Actions** `ihidro.submit_index`.
