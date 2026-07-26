@@ -1,0 +1,17 @@
+submit_index:
+  name: "SubmitSelfMeterRead"
+  description: "Submits a self read index to Hidroelectrica."
+  fields:
+    value:
+      name: "Meter Value (Index)"
+      description: "The numeric reading to submit."
+      required: true
+      example: 1050
+      selector:
+        number:
+          min: 0
+          max: 999999
+
+get_index_history:
+  name: "GetMeterReadHistory"
+  description: "Fetches historical index reads from Hidroelectrica."
