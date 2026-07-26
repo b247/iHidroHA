@@ -18,8 +18,10 @@ import platform
 import urllib.request
 import asyncio
 import logging
-from homeassistant.core import HomeAssistant
+
+from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.exceptions import HomeAssistantError
 from .const import DOMAIN, CONF_USER, CONF_PASS, CONF_UAN
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,7 +44,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await hass.async_add_executor_job(_download)
 
     # 2. Define Command Runner
-    async def run_cli(command_flags: list):
+    async def run_cli(command_flags: list) -> str:
         auth_data = json.dumps({
             "user": entry.data[CONF_USER],
             "pass": entry.data[CONF_PASS],
@@ -56,21 +58,39 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             stderr=asyncio.subprocess.PIPE
         )
         stdout, stderr = await proc.communicate()
+        out_str = stdout.decode().strip()
+        err_str = stderr.decode().strip()
+
         if proc.returncode != 0:
-            _LOGGER.error("iHidro CLI failed: %s", stderr.decode())
-            return None
-        return stdout.decode()
+            _LOGGER.error("iHidro CLI failed: %s", err_str)
+            raise HomeAssistantError(f"iHidro CLI error: {err_str}")
+
+        return out_str
 
     # 3. Register HA Services/Actions
-    async def handle_submit_index(call):
+    async def handle_submit_index(call: ServiceCall) -> dict:
         meter_value = str(call.data.get("value"))
-        await run_cli(["-submitIndex", meter_value])
+        output = await run_cli(["-submitIndex", meter_value])
+        return {"success": True, "output": output}
 
-    async def handle_get_index_history(call):
+    async def handle_get_index_history(call: ServiceCall) -> dict:
         output = await run_cli(["-getIndexHistory"])
-        _LOGGER.info("iHidro Index History: %s", output)
+        try:
+            return {"history": json.loads(output)}
+        except json.JSONDecodeError:
+            return {"output": output}
 
-    hass.services.async_register(DOMAIN, "submit_index", handle_submit_index)
-    hass.services.async_register(DOMAIN, "get_index_history", handle_get_index_history)
+    hass.services.async_register(
+        DOMAIN,
+        "submit_index",
+        handle_submit_index,
+        supports_response=SupportsResponse.OPTIONAL,
+    )
+    hass.services.async_register(
+        DOMAIN,
+        "get_index_history",
+        handle_get_index_history,
+        supports_response=SupportsResponse.OPTIONAL,
+    )
 
     return True
