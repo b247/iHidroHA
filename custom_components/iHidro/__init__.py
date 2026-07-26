@@ -1,17 +1,5 @@
 # Copyright (C) 2026 b247_eu, https://b247.eu.org
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <https://opensource.org/license/gpl-3.0/>.
+# ... (license header)
 import os
 import json
 import platform
@@ -21,13 +9,13 @@ import logging
 
 from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from .const import DOMAIN, CONF_USER, CONF_PASS, CONF_UAN
 
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    # 1. Download/Verify the iHidro-cli Binary
+    # 1. Download/Verify Binary
     bin_dir = hass.config.path("custom_components", DOMAIN, "bin")
     os.makedirs(bin_dir, exist_ok=True)
     binary_path = os.path.join(bin_dir, "iHidro-cli")
@@ -43,8 +31,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         await hass.async_add_executor_job(_download)
 
-    # 2. Define Command Runner
-    async def run_cli(command_flags: list) -> str:
+    # 2. Command Runner (Returns returncode, stdout, stderr)
+    async def run_cli(command_flags: list) -> tuple[int, str, str]:
         auth_data = json.dumps({
             "user": entry.data[CONF_USER],
             "pass": entry.data[CONF_PASS],
@@ -58,23 +46,34 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             stderr=asyncio.subprocess.PIPE
         )
         stdout, stderr = await proc.communicate()
-        out_str = stdout.decode().strip()
-        err_str = stderr.decode().strip()
+        return proc.returncode, stdout.decode().strip(), stderr.decode().strip()
 
-        if proc.returncode != 0:
-            _LOGGER.error("iHidro CLI failed: %s", err_str)
-            raise HomeAssistantError(f"iHidro CLI error: {err_str}")
-
-        return out_str
-
-    # 3. Register HA Services/Actions
+    # 3. Actions / Services
     async def handle_submit_index(call: ServiceCall) -> dict:
         meter_value = str(call.data.get("value"))
-        output = await run_cli(["-submitIndex", meter_value])
-        return {"success": True, "output": output}
+        returncode, stdout, stderr = await run_cli(["-submitIndex", meter_value])
+        
+        # Combine output stream (prefers stdout, falls back to stderr)
+        message = stdout if stdout else stderr
+
+        if returncode != 0:
+            # Triggers bottom-center volatile toast popup in HA UI
+            raise ServiceValidationError(message or "Failed to submit index.")
+
+        return {
+            "success": True,
+            "stdout": stdout,
+            "stderr": stderr,
+            "output": message,
+        }
 
     async def handle_get_index_history(call: ServiceCall) -> dict:
-        output = await run_cli(["-getIndexHistory"])
+        returncode, stdout, stderr = await run_cli(["-getIndexHistory"])
+        
+        if returncode != 0:
+            raise HomeAssistantError(stderr or "Failed to retrieve history.")
+
+        output = stdout or stderr
         try:
             return {"history": json.loads(output)}
         except json.JSONDecodeError:
