@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "iHidro Account Setup",
+        "description": "Enter your iHidro account details below.",
+        "data": {
+          "user": "Email",
+          "pass": "Password",
+          "uan": "Contract Number (UAN)"
+        },
+        "data_description": {
+          "user": "The email address used for your iHidro portal login.",
+          "pass": "Your iHidro account password.",
+          "uan": "Your 10-digit contract number (Cod Cont Contract), usually starting with 80... and located in the top-right 'Client' section of your invoice."
+        }
+      }
+    }
+  }
+}
+

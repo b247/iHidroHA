@@ -21,7 +21,7 @@ You should have received a copy of the GNU General Public License along with thi
 2. Add `https://github.com/b247/iHidroHA` with Type/Category **Integration**.
 3. Click **Download**, then restart Home Assistant.
 4. Go to **Settings** $\rightarrow$ **Devices & Services** $\rightarrow$ **Add Integration** $\rightarrow$ Search for **iHidro**.
-5. Enter your Email, Password, and UAN (Contract Number - Cod Cont Contract, usually starting with 80... and located on the top right "Client" scetion of Hidroelectrica invoices-).
+5. Add your iHidro/Hidroelectrica account details and UAN (Contract number).
 
 ---
 
