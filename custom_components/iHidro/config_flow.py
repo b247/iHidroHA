@@ -14,6 +14,7 @@
 # along with this program. If not, see <https://opensource.org/license/gpl-3.0/>.
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.helpers.selector import selector
 from .const import DOMAIN, CONF_USER, CONF_PASS, CONF_UAN
 
 class IHidroConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -26,8 +27,7 @@ class IHidroConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema({
             vol.Required(CONF_USER): str,
-            # vol.Required(CONF_PASS): str,
-            vol.Required(CONF_PASS): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD)),
+            vol.Required(CONF_PASS): selector({"text": {"type": "password"}}),
             vol.Required(CONF_UAN): str,
         })
         return self.async_show_form(step_id="user", data_schema=schema)
