@@ -1,6 +1,6 @@
 # iHidroHA
 
-This is a Home Assistant (HA) custom integration using the [iHidroGo](https://github.com/b247/iHidroGo)—a Go API client for the Hidroelectrica Romania (iHidro) SEW API server.
+This is a Home Assistant - HA - HACS integration using the [iHidroGo](https://github.com/b247/iHidroGo) — a Go API client for the Hidroelectrica Romania (iHidro) SEW API server.
 ## License
 
 Copyright (C) 2026 b247_eu, https://b247.eu.org
@@ -12,8 +12,8 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program. If not, see <https://opensource.org/license/gpl-3.0/>.
 ## What it does
 
-* **Meter Submission Action:** Registers a native Home Assistant action (`ihidro.submit_meter`) that transmits an index reading value provided by your own automations or scripts.
-* **History Fetching:** Retrieve submission history from the iHidro API.
+* **Meter Submission Action:** Registers a native Home Assistant action (`ihidro.submit_index`) to transmits an index reading value and can be used in automations or scripts.
+* **History Fetching:** Retrieve submission history from the iHidro API (`ihidro.get_index_history`).
 ---
 
 ## Installation
