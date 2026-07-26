@@ -1,5 +1,17 @@
 # Copyright (C) 2026 b247_eu, https://b247.eu.org
-# ... (license header)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://opensource.org/license/gpl-3.0/>.
 import os
 import json
 import platform
@@ -9,7 +21,7 @@ import logging
 
 from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.exceptions import ServiceValidationError
 from .const import DOMAIN, CONF_USER, CONF_PASS, CONF_UAN
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,7 +43,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         await hass.async_add_executor_job(_download)
 
-    # 2. Command Runner (Returns returncode, stdout, stderr)
+    # 2. Command Runner
     async def run_cli(command_flags: list) -> tuple[int, str, str]:
         auth_data = json.dumps({
             "user": entry.data[CONF_USER],
@@ -52,30 +64,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async def handle_submit_index(call: ServiceCall) -> dict:
         meter_value = str(call.data.get("value"))
         returncode, stdout, stderr = await run_cli(["-submitIndex", meter_value])
-        
-        # Combine output stream (prefers stdout, falls back to stderr)
-        message = stdout if stdout else stderr
+        output = stdout or stderr
 
         if returncode != 0:
-            # Triggers bottom-center volatile toast popup in HA UI
-            raise ServiceValidationError(message or "Failed to submit index.")
+            raise ServiceValidationError(output or "Failed to submit index.")
 
-        return {
-            "success": True,
-            "stdout": stdout,
-            "stderr": stderr,
-            "output": message,
-        }
+        return {"output": output}
 
     async def handle_get_index_history(call: ServiceCall) -> dict:
         returncode, stdout, stderr = await run_cli(["-getIndexHistory"])
-        
-        if returncode != 0:
-            raise HomeAssistantError(stderr or "Failed to retrieve history.")
-
         output = stdout or stderr
+
+        if returncode != 0:
+            raise ServiceValidationError(output or "Failed to retrieve history.")
+
         try:
-            return {"history": json.loads(output)}
+            return {"output": json.loads(output)}
         except json.JSONDecodeError:
             return {"output": output}
 
