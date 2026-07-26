@@ -1,6 +1,6 @@
 # iHidroHA
 
-This is a Home Assistant (HA) custom integration for [iHidroGo](https://github.com/b247/iHidroGo)—a Go API client for the Hidroelectrica Romania (iHidro) SEW API server.
+This is a Home Assistant (HA) custom integration using the [iHidroGo](https://github.com/b247/iHidroGo)—a Go API client for the Hidroelectrica Romania (iHidro) SEW API server.
 ## License
 
 Copyright (C) 2026 b247_eu, https://b247.eu.org
