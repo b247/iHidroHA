@@ -26,7 +26,8 @@ class IHidroConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema({
             vol.Required(CONF_USER): str,
-            vol.Required(CONF_PASS): str,
+            # vol.Required(CONF_PASS): str,
+            vol.Required(CONF_PASS): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD)),
             vol.Required(CONF_UAN): str,
         })
         return self.async_show_form(step_id="user", data_schema=schema)
