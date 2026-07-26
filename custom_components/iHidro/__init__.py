@@ -67,9 +67,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         output = stdout or stderr
 
         if returncode != 0:
-            raise ServiceValidationError(output or "Failed to submit index.")
+            return {"success": False, "output": output or "Failed to submit index."}
 
-        return {"output": output}
+        return {"success": True, "output": output}
 
     async def handle_get_index_history(call: ServiceCall) -> dict:
         returncode, stdout, stderr = await run_cli(["-getIndexHistory"])
