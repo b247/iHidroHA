@@ -7,7 +7,7 @@
 This is a Home Assistant - HA - HACS integration using the [iHidroGo](https://github.com/b247/iHidroGo) — a Go API client for the Hidroelectrica Romania (iHidro) SEW API server.
 
 ## License
-Copyright (C) 2026 b247_eu, https://b247.eu.org
+Copyright (C) 2026 @b247_eu, https://b247.eu.org
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
@@ -24,7 +24,7 @@ You should have received a copy of the GNU General Public License along with thi
 1. Open **HACS** in Home Assistant &rarr;Click the **3 dots** (top right) &rarr;**Custom repositories**.
 2. Add `https://github.com/b247/iHidroHA` with Type/Category **Integration**.
 3. Click **Download**, then restart Home Assistant.
-4. Go to **Settings** &rarr;**Devices & Services** &rarr;**Add Integration** &rarr;Search for **iHidro**.
+4. Go to **Settings** &rarr; **Devices & Services** &rarr; **Add Integration** &rarr; Search for **iHidro**.
 5. Add your iHidro/Hidroelectrica account details and UAN (Contract number).
 
 
