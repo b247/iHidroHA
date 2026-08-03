@@ -7,7 +7,7 @@
 This is a Home Assistant - HA - HACS integration using the [iHidroGo](https://github.com/b247/iHidroGo) — a Go API client for the Hidroelectrica Romania (iHidro) SEW API server.
 
 ## License
-Copyright (C) 2026 @b247_eu, https://b247.eu.org
+Copyright (C) 2026 b247_eu, https://b247.eu.org
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
