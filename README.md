@@ -1,5 +1,9 @@
 # iHidroHA
 
+![Home Assistant Integration](https://img.shields.io/badge/Home%20Assistant-Integration-blue.svg)
+![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)
+
+
 This is a Home Assistant - HA - HACS integration using the [iHidroGo](https://github.com/b247/iHidroGo) — a Go API client for the Hidroelectrica Romania (iHidro) SEW API server.
 
 ## License
@@ -17,10 +21,10 @@ You should have received a copy of the GNU General Public License along with thi
 ---
 
 ## Installation
-1. Open **HACS** in Home Assistant $\rightarrow$ Click the **3 dots** (top right) $\rightarrow$ **Custom repositories**.
+1. Open **HACS** in Home Assistant &rarr;Click the **3 dots** (top right) &rarr;**Custom repositories**.
 2. Add `https://github.com/b247/iHidroHA` with Type/Category **Integration**.
 3. Click **Download**, then restart Home Assistant.
-4. Go to **Settings** $\rightarrow$ **Devices & Services** $\rightarrow$ **Add Integration** $\rightarrow$ Search for **iHidro**.
+4. Go to **Settings** &rarr;**Devices & Services** &rarr;**Add Integration** &rarr;Search for **iHidro**.
 5. Add your iHidro/Hidroelectrica account details and UAN (Contract number).
 
 
@@ -33,11 +37,11 @@ action: ihidro.submit_index
 data:
   value: 1050
 ```
-Or manually from **Developer tools** $\rightarrow$ **Actions** `ihidro.submit_index`.
+Or manually from **Developer tools** &rarr;**Actions** `ihidro.submit_index`.
 
 A complete HA automation example
 ---
-Triggered by the change (state update) of `input_number.shellypluspmminitgbt_em_offset`— a **Input number helper** created in **Devices & Services** $\rightarrow$ **Helpers** 
+Triggered by the change (state update) of `input_number.shellypluspmminitgbt_em_offset`— a **Input number helper** created in **Devices & Services** &rarr;**Helpers** 
 ```yaml
 alias: Submit iHidro index and Reset Shelly Monthly Meter
 description: ""
